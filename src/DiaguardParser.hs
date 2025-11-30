@@ -15,6 +15,7 @@ module DiaguardParser
 import qualified Data.ByteString.Lazy as BL
 import qualified Data.ByteString.Lazy.Char8 as BLC
 import Data.List (isPrefixOf)
+import Text.Read (readMaybe)
 
 data EntryData = EntryData
     { entryDate :: String
@@ -71,22 +72,26 @@ parseLine line =
         
         -- "measurement";"bloodsugar";"224.0" -> extract and convert to int
         ("\"measurement\"":"\"bloodsugar\"":value:_) -> 
-            let bs = floor (read (removeQuotes value) :: Double) :: Int
-            in Just (\e -> e { bloodSugar = Just bs })
+            case readMaybe (removeQuotes value) :: Maybe Double of
+                Just d -> Just (\e -> e { bloodSugar = Just (floor d) })
+                Nothing -> Nothing
         
         -- "measurement";"insulin";"5.0";"4.0";"3.0" -> sum first two, get third
         ("\"measurement\"":"\"insulin\"":val1:val2:val3:_) -> 
-            let v1 = read (removeQuotes val1) :: Double
-                v2 = read (removeQuotes val2) :: Double
-                v3 = read (removeQuotes val3) :: Double
-                fast = floor (v1 + v2) :: Int
-                basal = floor v3 :: Int
-            in Just (\e -> e { fastInsulin = Just fast, basalInsulin = Just basal })
+            case (readMaybe (removeQuotes val1) :: Maybe Double, 
+                  readMaybe (removeQuotes val2) :: Maybe Double, 
+                  readMaybe (removeQuotes val3) :: Maybe Double) of
+                (Just v1, Just v2, Just v3) -> 
+                    let fast = floor (v1 + v2) :: Int
+                        basal = floor v3 :: Int
+                    in Just (\e -> e { fastInsulin = Just fast, basalInsulin = Just basal })
+                _ -> Nothing
         
         -- "measurement";"meal";"60.0" -> extract and convert to int
         ("\"measurement\"":"\"meal\"":value:_) -> 
-            let m = floor (read (removeQuotes value) :: Double) :: Int
-            in Just (\e -> e { carbs = Just m })
+            case readMaybe (removeQuotes value) :: Maybe Double of
+                Just d -> Just (\e -> e { carbs = Just (floor d) })
+                Nothing -> Nothing
         
         -- Unknown format, ignore
         _ -> Nothing

@@ -83,6 +83,34 @@ spec = do
       case result of
         Nothing -> return ()
         Just _ -> expectationFailure "Expected Nothing but got Just"
+    
+    it "handles invalid blood sugar value gracefully" $ do
+      let line = BLC.pack "\"measurement\";\"bloodsugar\";\"N/A\""
+          result = parseLine line
+      case result of
+        Nothing -> return ()
+        Just _ -> expectationFailure "Expected Nothing for invalid blood sugar"
+    
+    it "handles invalid insulin values gracefully" $ do
+      let line = BLC.pack "\"measurement\";\"insulin\";\"error\";\"4.0\";\"3.0\""
+          result = parseLine line
+      case result of
+        Nothing -> return ()
+        Just _ -> expectationFailure "Expected Nothing for invalid insulin"
+    
+    it "handles invalid meal value gracefully" $ do
+      let line = BLC.pack "\"measurement\";\"meal\";\"invalid\""
+          result = parseLine line
+      case result of
+        Nothing -> return ()
+        Just _ -> expectationFailure "Expected Nothing for invalid meal"
+    
+    it "handles empty numeric values gracefully" $ do
+      let line = BLC.pack "\"measurement\";\"bloodsugar\";\"\""
+          result = parseLine line
+      case result of
+        Nothing -> return ()
+        Just _ -> expectationFailure "Expected Nothing for empty blood sugar"
 
   describe "formatEntry" $ do
     it "formats complete entry" $ do
