@@ -1,6 +1,6 @@
 # glikoz-csv-parser
 
-A Haskell CSV parser for processing Glikoz data files. Currently supports only Diaguard backups.
+A Haskell CSV parser for processing [Glikoz](https://github.com/almeidaraul/glikoz) data files. Currently supports only Diaguard backups.
 
 ## Building
 
