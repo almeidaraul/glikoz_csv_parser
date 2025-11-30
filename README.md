@@ -11,7 +11,7 @@ cabal build
 ## Running
 
 ```bash
-cabal run glikoz-csv-parser
+cabal run glikoz-csv-parser <filename.csv>
 ```
 
 ## Testing
