@@ -54,6 +54,14 @@ extra-doc-files:    CHANGELOG.md
 common warnings
     ghc-options: -Wall
 
+library
+    import:           warnings
+    exposed-modules:  DiaguardParser
+    build-depends:    base ^>=4.18.3.0
+                    , bytestring
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
 executable glikoz-csv-parser
     -- Import common warning flags.
     import:           warnings
@@ -70,11 +78,22 @@ executable glikoz-csv-parser
     -- Other library packages from which modules are imported.
     build-depends:    base ^>=4.18.3.0
                     , bytestring
-                    , cassava
-                    , vector
+                    , glikoz-csv-parser
 
     -- Directories containing source files.
     hs-source-dirs:   app
 
     -- Base language which the package is written in.
     default-language: Haskell2010
+
+test-suite glikoz-csv-parser-test
+    import:           warnings
+    default-language: Haskell2010
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Main.hs
+    other-modules:    DiaguardParserSpec
+    build-depends:    base ^>=4.18.3.0
+                    , bytestring
+                    , glikoz-csv-parser
+                    , hspec
